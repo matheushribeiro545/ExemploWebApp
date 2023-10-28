@@ -40,7 +40,7 @@ public class UserViewModels
     {
         public string Id { get; set; }
         public string Email { get; set; }
-        public IEnumerator<UsuarioClaim> Claims { get; set; }
+        public IEnumerable<UsuarioClaim> Claims { get; set; }
     }
     
     public class UsuarioClaim
