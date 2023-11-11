@@ -1,70 +1,33 @@
-using System.Text;
-using Exemplo.Auth.API.Data;
-using Exemplo.Auth.API.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Exemplo.Auth.API.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração da string do banco de dados utilizando Identity
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Configuration.SetBasePath(builder.Environment.ContentRootPath);
+builder.Configuration.AddJsonFile("appsettings.json", true, true);
+builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true);
+builder.Configuration.AddEnvironmentVariables();
 
-// Configuração do Identity
-builder.Services.AddDefaultIdentity<IdentityUser>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
-
-// Configuração de autenticação, utilizando JWT
-var appSettingsSection = builder.Configuration.GetSection("AppSettings");
-builder.Services.Configure<AppSettings>(appSettingsSection);
-
-var appSettings = appSettingsSection.Get<AppSettings>();
-var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(bearerOptions =>
-    {
-        bearerOptions.RequireHttpsMetadata = true;
-        bearerOptions.SaveToken = true;
-        bearerOptions.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidAudience = appSettings.ValidoEm,
-            ValidIssuer = appSettings.Emissor
-        };
-    });
-
-// Middleware pipeline
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    builder.Configuration.AddUserSecrets<StartupBase>();
 }
 
-app.UseHttpsRedirection();
+#region Services
+builder.Services.AddIdentityConfiguration(builder.Configuration);
 
-app.UseRouting();
+builder.Services.AddApiConfiguration();
 
-app.UseAuthentication();
+builder.Services.AddSwaggerConfiguration();
 
-app.UseAuthorization();
+var app = builder.Build();
+#endregion
+
+#region Pipeline
+app.UseSwaggerConfiguration();
+
+app.UseApiConfiguration(app.Environment);
 
 app.MapControllers();
 
 app.Run();
+#endregion
