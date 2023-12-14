@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aspnet-Exemplo.WebApp.MVC-47AAC4F4-FD90-47E7-BF92-A78B7AEF4111</UserSecretsId>
     </PropertyGroup>
@@ -13,12 +13,19 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.21"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.21"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.21"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.23"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.23"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.21"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.24" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.21"/>
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
     </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\services\Exemplo.Auth.API\Exemplo.Auth.API.csproj" />
+    </ItemGroup>
+
+
 
 </Project>
