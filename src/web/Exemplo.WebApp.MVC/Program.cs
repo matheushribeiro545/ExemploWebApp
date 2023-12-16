@@ -15,6 +15,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddIdentityConfiguration();
 builder.Services.AddMvcConfiguration();
+builder.Services.RegisterServices();
 
 var app = builder.Build();
 
